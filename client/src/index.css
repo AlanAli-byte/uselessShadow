@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 98%);
+  --foreground: hsl(210, 10%, 8%);
+  --muted: hsl(210, 40%, 96%);
+  --muted-foreground: hsl(215, 16%, 45%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(210, 10%, 8%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(210, 10%, 8%);
+  --border: hsl(214, 32%, 88%);
+  --input: hsl(214, 32%, 88%);
+  --primary: hsl(15, 100%, 50%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(210, 40%, 96%);
+  --secondary-foreground: hsl(210, 10%, 20%);
+  --accent: hsl(210, 40%, 96%);
+  --accent-foreground: hsl(210, 10%, 20%);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --ring: hsl(15, 100%, 50%);
+  --radius: 1.2rem;
+}
+
+.dark {
+  --background: hsl(210, 10%, 4%);
+  --foreground: hsl(0, 0%, 96%);
+  --muted: hsl(210, 10%, 8%);
+  --muted-foreground: hsl(210, 10%, 60%);
+  --popover: hsl(210, 10%, 6%);
+  --popover-foreground: hsl(0, 0%, 96%);
+  --card: hsl(210, 10%, 6%);
+  --card-foreground: hsl(0, 0%, 96%);
+  --border: hsl(210, 10%, 12%);
+  --input: hsl(210, 10%, 12%);
+  --primary: hsl(15, 100%, 55%);
+  --primary-foreground: hsl(0, 0%, 0%);
+  --secondary: hsl(210, 10%, 8%);
+  --secondary-foreground: hsl(0, 0%, 96%);
+  --accent: hsl(210, 10%, 8%);
+  --accent-foreground: hsl(0, 0%, 96%);
+  --destructive: hsl(0, 62.8%, 50%);
+  --destructive-foreground: hsl(0, 0%, 96%);
+  --ring: hsl(15, 100%, 55%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-medium;
+  }
+}
+
+@layer components {
+  .shadow-gradient {
+    background: linear-gradient(135deg, hsl(15, 100%, 50%) 0%, hsl(25, 100%, 60%) 100%);
+  }
+  
+  .weather-gradient {
+    background: linear-gradient(135deg, hsl(195, 100%, 50%) 0%, hsl(205, 100%, 60%) 100%);
+  }
+  
+  .soul-gradient {
+    background: linear-gradient(135deg, hsl(0, 0%, 99%) 0%, hsl(210, 40%, 98%) 100%);
+  }
+  
+  .minimal-card {
+    @apply bg-card backdrop-blur-sm border border-border rounded-3xl shadow-sm;
+  }
+  
+  .glass-effect {
+    @apply bg-white/10 backdrop-blur-md border border-white/20;
+  }
+  
+  .icon-minimal {
+    @apply w-5 h-5 text-primary opacity-70;
+  }
+}
