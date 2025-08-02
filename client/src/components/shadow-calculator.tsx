@@ -6,11 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent } from "@/components/ui/card";
-import { Ruler, MapPin, Compass, Footprints, Calendar, Clock, Navigation, Sun } from "lucide-react";
+import { Ruler, MapPin, Compass, Footprints, Calendar, Clock, Navigation, Sun, CloudRain } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { shadowCalculationSchema, type ShadowCalculation, type ShadowResults, type WeatherData, type SoulInterpretation } from "@shared/schema";
 import { calculateShadowLength, generateSoulInterpretation } from "@/lib/shadow-calculations";
-import { fetchWeatherData, geocodeCity } from "@/lib/weather-api";
+import { geocodeCity } from "@/lib/weather-api";
 
 interface ShadowCalculatorProps {
   onCalculation: (results: ShadowResults, weather: WeatherData, interpretation: SoulInterpretation) => void;
@@ -39,6 +39,7 @@ export function ShadowCalculator({ onCalculation, isCalculating, setIsCalculatin
       longitude: -74.0060,
       direction: "North",
       shoeBrand: "Nike",
+      weather: "sunny",
       date: new Date().toISOString().split('T')[0],
       time: "12:00",
     },
@@ -107,15 +108,21 @@ export function ShadowCalculator({ onCalculation, isCalculating, setIsCalculatin
       if (!shadowResults.shadowExists) {
         toast({
           title: "No Shadow",
-          description: "The sun is below the horizon at this time. No shadow can be cast.",
+          description: "The sun is too low at this time. No meaningful shadow can be cast.",
           variant: "destructive",
         });
         setIsCalculating(false);
         return;
       }
 
-      // Fetch weather data
-      const weatherData = await fetchWeatherData(data.latitude, data.longitude);
+      // Create weather data from user selection
+      const weatherData = {
+        description: data.weather.charAt(0).toUpperCase() + data.weather.slice(1),
+        temperature: 20,
+        cloudCover: data.weather === "cloudy" ? 50 : data.weather === "foggy" ? 80 : data.weather === "rainy" ? 70 : 0,
+        visibility: data.weather === "foggy" ? "2km" : data.weather === "rainy" ? "5km" : "10km",
+        selectedWeather: data.weather,
+      };
       
       // Generate soul interpretation
       const soulInterpretation = generateSoulInterpretation(data, shadowResults);
@@ -309,6 +316,34 @@ export function ShadowCalculator({ onCalculation, isCalculating, setIsCalculatin
                             <SelectItem value="Reebok">Reebok</SelectItem>
                             <SelectItem value="New Balance">New Balance</SelectItem>
                             <SelectItem value="Other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Weather Selection */}
+                <FormField
+                  control={form.control}
+                  name="weather"
+                  render={({ field }) => (
+                    <FormItem className="space-y-4">
+                      <FormLabel className="flex items-center text-sm font-light text-muted-foreground">
+                        <CloudRain className="icon-minimal mr-3" />
+                        Weather
+                      </FormLabel>
+                      <FormControl>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <SelectTrigger className="bg-transparent border-border/30 focus:border-primary/50 rounded-2xl px-4 py-3">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="sunny">Sunny</SelectItem>
+                            <SelectItem value="cloudy">Cloudy</SelectItem>
+                            <SelectItem value="rainy">Rainy</SelectItem>
+                            <SelectItem value="foggy">Foggy</SelectItem>
                           </SelectContent>
                         </Select>
                       </FormControl>

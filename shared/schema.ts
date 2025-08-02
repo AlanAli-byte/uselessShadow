@@ -7,6 +7,7 @@ export const shadowCalculationSchema = z.object({
   longitude: z.number().min(-180).max(180),
   direction: z.enum(["North", "Northeast", "East", "Southeast", "South", "Southwest", "West", "Northwest"]),
   shoeBrand: z.enum(["Nike", "Adidas", "Converse", "Vans", "Puma", "Reebok", "New Balance", "Other"]),
+  weather: z.enum(["sunny", "rainy", "cloudy", "foggy"]),
   date: z.string(),
   time: z.string(),
 });
@@ -16,6 +17,7 @@ export const weatherDataSchema = z.object({
   temperature: z.number(),
   cloudCover: z.number(),
   visibility: z.string(),
+  selectedWeather: z.enum(["sunny", "rainy", "cloudy", "foggy"]),
 });
 
 export const shadowResultsSchema = z.object({

@@ -40,8 +40,8 @@ export function calculateShadowLength(data: ShadowCalculation): ShadowResults {
                      Math.cos(latRad) * Math.cos(decRad) * Math.cos(hourAngleRad);
   const altitude = Math.asin(sinAltitude) * (180 / Math.PI);
 
-  // Check if shadow exists
-  const shadowExists = altitude > 0;
+  // Check if shadow exists - sun must be at least 5 degrees above horizon to cast meaningful shadow
+  const shadowExists = altitude > 5;
 
   if (!shadowExists) {
     return {
