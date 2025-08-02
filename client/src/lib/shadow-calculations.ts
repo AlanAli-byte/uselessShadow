@@ -40,23 +40,26 @@ export function calculateShadowLength(data: ShadowCalculation): ShadowResults {
                      Math.cos(latRad) * Math.cos(decRad) * Math.cos(hourAngleRad);
   const altitude = Math.asin(sinAltitude) * (180 / Math.PI);
 
-  // Calculate sunrise and sunset hour angles
+  // Calculate sunrise and sunset times more accurately
   const cosHourAngle = -Math.tan(latRad) * Math.tan(decRad);
   
-  // Check if the sun ever rises/sets at this location and date
   let shadowExists = false;
+  
+  // Check if the sun rises and sets at this location (polar regions may not)
   if (cosHourAngle >= -1 && cosHourAngle <= 1) {
     const sunriseHourAngle = Math.acos(cosHourAngle) * (180 / Math.PI);
-    const sunsetHourAngle = -sunriseHourAngle;
     
-    // Convert to local solar time
+    // Calculate sunrise and sunset times in local solar time
     const sunriseTime = 12 - sunriseHourAngle / 15;
-    const sunsetTime = 12 - sunsetHourAngle / 15;
+    const sunsetTime = 12 + sunriseHourAngle / 15;
     
-    // Check if current time is between sunrise and sunset AND sun is high enough
-    shadowExists = localSolarTime >= sunriseTime && 
-                   localSolarTime <= sunsetTime && 
-                   altitude > 10; // Increased threshold to 10 degrees for better accuracy
+    // More strict conditions: must be daytime AND sun must be high enough AND not too early/late
+    const isAfterSunrise = localSolarTime >= (sunriseTime + 1); // At least 1 hour after sunrise
+    const isBeforeSunset = localSolarTime <= (sunsetTime - 1); // At least 1 hour before sunset
+    const isSunHighEnough = altitude > 15; // Minimum 15 degrees for visible shadow
+    const isReasonableTime = localSolarTime >= 7 && localSolarTime <= 17; // Between 7 AM and 5 PM
+    
+    shadowExists = isAfterSunrise && isBeforeSunset && isSunHighEnough && isReasonableTime;
   }
 
   if (!shadowExists) {
