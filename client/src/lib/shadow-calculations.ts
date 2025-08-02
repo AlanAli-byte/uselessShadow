@@ -1,7 +1,7 @@
 import type { ShadowCalculation, ShadowResults, SoulInterpretation } from "@shared/schema";
 
 export function calculateShadowLength(data: ShadowCalculation): ShadowResults {
-  const { height, heightUnit, latitude, longitude, date, time } = data;
+  const { height, heightUnit, latitude, longitude, date, time, weather } = data;
 
   // Convert height to feet for consistent calculations
   let heightInFeet = height;
@@ -59,7 +59,25 @@ export function calculateShadowLength(data: ShadowCalculation): ShadowResults {
     const isSunHighEnough = altitude > 15; // Minimum 15 degrees for visible shadow
     const isReasonableTime = localSolarTime >= 7 && localSolarTime <= 17; // Between 7 AM and 5 PM
     
-    shadowExists = isAfterSunrise && isBeforeSunset && isSunHighEnough && isReasonableTime;
+    // Apply weather conditions to shadow visibility
+    let weatherAffectsShadow = true;
+    switch (weather) {
+      case "rainy":
+        weatherAffectsShadow = false; // No visible shadows in rain
+        break;
+      case "foggy":
+        weatherAffectsShadow = false; // No visible shadows in fog
+        break;
+      case "cloudy":
+        weatherAffectsShadow = altitude > 25; // Need higher sun angle for shadows through clouds
+        break;
+      case "sunny":
+      default:
+        weatherAffectsShadow = true; // Clear shadows in sunny weather
+        break;
+    }
+    
+    shadowExists = isAfterSunrise && isBeforeSunset && isSunHighEnough && isReasonableTime && weatherAffectsShadow;
   }
 
   if (!shadowExists) {
@@ -74,7 +92,23 @@ export function calculateShadowLength(data: ShadowCalculation): ShadowResults {
   }
 
   // Calculate shadow length using L = h / tan(α)
-  const shadowLengthFeet = heightInFeet / Math.tan(altitude * (Math.PI / 180));
+  let shadowLengthFeet = heightInFeet / Math.tan(altitude * (Math.PI / 180));
+  
+  // Apply weather effects to shadow length and sharpness
+  let weatherMultiplier = 1.0;
+  switch (weather) {
+    case "cloudy":
+      weatherMultiplier = 0.7; // Softer, shorter shadows in cloudy weather
+      break;
+    case "sunny":
+      weatherMultiplier = 1.0; // Full, sharp shadows in sunny weather
+      break;
+    default:
+      weatherMultiplier = 1.0;
+      break;
+  }
+  
+  shadowLengthFeet *= weatherMultiplier;
 
   // Convert to other units
   const planckLength = shadowLengthFeet * 0.3048 / 1.616e-35; // Convert to meters then to Planck lengths
@@ -95,7 +129,7 @@ export function generateSoulInterpretation(
   calculation: ShadowCalculation, 
   results: ShadowResults
 ): SoulInterpretation {
-  const { shoeBrand, direction } = calculation;
+  const { shoeBrand, direction, weather } = calculation;
   const shadowLength = results.feet;
 
   // Generate interpretation based on shadow length and inputs
@@ -103,9 +137,15 @@ export function generateSoulInterpretation(
   let description = "";
   let traits = [];
 
+  // Add weather context to descriptions
+  const weatherContext = weather === "sunny" ? "under bright sunshine" : 
+                         weather === "cloudy" ? "through filtered clouds" :
+                         weather === "rainy" ? "despite the rain" : 
+                         "through the mist";
+
   if (shadowLength < 2) {
     title = "The Focused Soul";
-    description = `Your shadow measures ${shadowLength.toFixed(2)} feet, revealing a soul that stands tall in the light of truth. Like a sundial at noon, you cast minimal shadows because you face life directly. Your ${shoeBrand} shoes ground you to reality while your spirit reaches for clarity.`;
+    description = `Your shadow measures ${shadowLength.toFixed(2)} feet ${weatherContext}, revealing a soul that stands tall in the light of truth. Like a sundial at noon, you cast minimal shadows because you face life directly. Your ${shoeBrand} shoes ground you to reality while your spirit reaches for clarity.`;
     traits = [
       { name: "Directness", description: "You approach life with honesty", icon: "arrow-right" },
       { name: "Clarity", description: "Your vision cuts through confusion", icon: "eye" },
@@ -113,7 +153,7 @@ export function generateSoulInterpretation(
     ];
   } else if (shadowLength < 5) {
     title = "The Balanced Wanderer";
-    description = `At ${shadowLength.toFixed(2)} feet, your shadow speaks of perfect equilibrium between earth and sky. Facing ${direction.toLowerCase()}, you navigate life with measured steps in your ${shoeBrand} shoes, leaving a meaningful impression on the world.`;
+    description = `At ${shadowLength.toFixed(2)} feet ${weatherContext}, your shadow speaks of perfect equilibrium between earth and sky. Facing ${direction.toLowerCase()}, you navigate life with measured steps in your ${shoeBrand} shoes, leaving a meaningful impression on the world.`;
     traits = [
       { name: "Balance", description: "You find harmony in all things", icon: "scale" },
       { name: "Wisdom", description: "Your choices reflect deep thought", icon: "book" },
@@ -121,7 +161,7 @@ export function generateSoulInterpretation(
     ];
   } else {
     title = "The Profound Dreamer";
-    description = `Your ${shadowLength.toFixed(2)}-foot shadow stretches across the earth like a bridge between worlds. In your ${shoeBrand} shoes, you carry dreams that cast long shadows, influencing far more than your immediate presence suggests.`;
+    description = `Your ${shadowLength.toFixed(2)}-foot shadow stretches ${weatherContext} across the earth like a bridge between worlds. In your ${shoeBrand} shoes, you carry dreams that cast long shadows, influencing far more than your immediate presence suggests.`;
     traits = [
       { name: "Vision", description: "You see beyond the immediate", icon: "telescope" },
       { name: "Influence", description: "Your impact extends far", icon: "ripple" },
