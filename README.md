@@ -71,20 +71,21 @@ Just open `index.html` in your browser.
 ## 🖼 Project Documentation
 
 ### 📸 Screenshots
-
 #### 🌤️ Home Interface
-<img width="1908" height="1071" alt="Image" src="https://github.com/user-attachments/assets/32565044-b566-49ff-aaed-bc68b1e2fff1" />
+<img width="1876" height="768" alt="Image" src="https://github.com/user-attachments/assets/afeda586-9978-44f0-ba40-27c1ba3c5075" />
+
 *Title Bar*
 
 #### 📍 Map + Input Panel
-<img width="1876" height="768" alt="Image" src="https://github.com/user-attachments/assets/afeda586-9978-44f0-ba40-27c1ba3c5075" />
 <img width="1831" height="1073" alt="Image" src="https://github.com/user-attachments/assets/25f147ed-0f8a-421b-bb53-be51fa331c59" />
+<img width="1873" height="1077" alt="Image" src="https://github.com/user-attachments/assets/97297fe3-a649-42f7-bcd2-04f329e26fad" />
+
 *User selects input values like height, direction, weather, and city.*
 *Live map to input coordinates or select city manually.*
 
 #### 🌑 SoulShade Result View
-<img width="1873" height="1077" alt="Image" src="https://github.com/user-attachments/assets/97297fe3-a649-42f7-bcd2-04f329e26fad" />
 <img width="1883" height="1067" alt="Image" src="https://github.com/user-attachments/assets/df81630a-6f33-4fe1-932c-878b18a64ba2" />
+<img width="1908" height="1071" alt="Image" src="https://github.com/user-attachments/assets/32565044-b566-49ff-aaed-bc68b1e2fff1" />
 *Calculated shadow in mm, feet, horse lengths, light-years—with deep commentary.*
 
 ---
