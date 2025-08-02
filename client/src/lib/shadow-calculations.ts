@@ -40,8 +40,24 @@ export function calculateShadowLength(data: ShadowCalculation): ShadowResults {
                      Math.cos(latRad) * Math.cos(decRad) * Math.cos(hourAngleRad);
   const altitude = Math.asin(sinAltitude) * (180 / Math.PI);
 
-  // Check if shadow exists - sun must be at least 5 degrees above horizon to cast meaningful shadow
-  const shadowExists = altitude > 5;
+  // Calculate sunrise and sunset hour angles
+  const cosHourAngle = -Math.tan(latRad) * Math.tan(decRad);
+  
+  // Check if the sun ever rises/sets at this location and date
+  let shadowExists = false;
+  if (cosHourAngle >= -1 && cosHourAngle <= 1) {
+    const sunriseHourAngle = Math.acos(cosHourAngle) * (180 / Math.PI);
+    const sunsetHourAngle = -sunriseHourAngle;
+    
+    // Convert to local solar time
+    const sunriseTime = 12 - sunriseHourAngle / 15;
+    const sunsetTime = 12 - sunsetHourAngle / 15;
+    
+    // Check if current time is between sunrise and sunset AND sun is high enough
+    shadowExists = localSolarTime >= sunriseTime && 
+                   localSolarTime <= sunsetTime && 
+                   altitude > 10; // Increased threshold to 10 degrees for better accuracy
+  }
 
   if (!shadowExists) {
     return {
