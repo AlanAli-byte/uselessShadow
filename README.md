@@ -116,10 +116,6 @@ Weather just adds soul to the visual. Shadows still exist behind the clouds.
 
 ## 📹 Project Demo
 
-### 🎥 Demo Video
-<video controls src="shadowscreen-1.mp4" title="Title"></video>
-*Explains how the site works, sample inputs, and output visualization*
-
 ### 🔗 Bonus Links
 https://uselessshadow.onrender.com
 *Live Site Preview*
